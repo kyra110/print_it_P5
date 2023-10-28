@@ -17,45 +17,71 @@ const slides = [
     tagLine: "Autocollants <span>avec découpe laser sur mesure</span>",
   },
 ];
-/*Selection des fleches dans une variable*/
-const flecheDroite = document.querySelector(".arrow_right");
-const flecheGauche = document.querySelector(".arrow_left");
+
+/*Variables*/
+const nextSlide = document.querySelector(".arrow_right");
+const prevSlide = document.querySelector(".arrow_left");
 /*Selection de la zone d'affichage des images*/
-const affichage = document.querySelector(".banner-img");
+const imgSlider = document.querySelector(".banner-img");
+const tagLineSlider = document.querySelector("#banner p");
 /*initialisation de la position des images */
 let index = 0;
-
+const lastElement = slides.length - 1;
 /*bullets points*/
 const dots = document.querySelector(".dots");
 
-for (let i = 0; i < slides.length; i++) {
-  const dot = document.createElement("div");
-  dot.classList.add("dot");
-  if (i == index) {
-    dot.classList.add("dot_selected");
-  }
-  dots.appendChild(dot);
+/*Structure Globale du code enregistré dans des fonctions*/
+function main() {
+  createSliderPoints();
+  slideRight();
+  slideLeft();
+  dinamicSlidesContent();
 }
+/*Lancement du script*/
+main();
+
+/*Création des bullets points*/
+function createSliderPoints() {
+  for (let i = 0; i < slides.length; i++) {
+    const dot = document.createElement("div");
+    dot.classList.add("dot");
+    if (i == index) {
+      dot.classList.add("dot_selected");
+    }
+    dots.appendChild(dot);
+  }
+}
+/*Récupération des dot Ne peut pas ètre déclareée avant
+ car nous créons les dot dans cette boucle*/
+const dot = document.querySelectorAll(".dots .dot");
 
 /*evenement au click droit*/
-flecheDroite.addEventListener("click", () => {
-  console.log("droite");
-  affichage.src = "./assets/images/slideshow/" + slides[index].image;
-  index++;
-  if (index > 0) {
-  }
-  if (index > 3) {
-    index = 0;
-  }
-  console.log(index);
-});
+function slideRight() {
+  nextSlide.addEventListener("click", () => {
+    dot[index].classList.remove("dot_selected");
+    index++;
+    if (index > lastElement) {
+      index = 0;
+    }
+    dot[index].classList.add("dot_selected");
+    dinamicSlidesContent();
+  });
+}
 
-flecheGauche.addEventListener("click", () => {
-  console.log("gauche");
-  affichage.src = "./assets/images/slideshow/" + slides[index].image;
-  index++;
-  if (index < 0 || index > 3) {
-    index = 0;
-  }
-  console.log(index);
-});
+/*evenement au click gauche*/
+function slideLeft() {
+  prevSlide.addEventListener("click", () => {
+    dot[index].classList.remove("dot_selected");
+    index--;
+    if (index < 0) {
+      index = lastElement;
+    }
+    dot[index].classList.add("dot_selected");
+    dinamicSlidesContent();
+  });
+}
+/* Ajout de L'image et du titre dynamique*/
+function dinamicSlidesContent() {
+  imgSlider.src = "./assets/images/slideshow/" + slides[index].image;
+  tagLineSlider.innerHTML = slides[index].tagLine;
+}
